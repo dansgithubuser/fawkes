@@ -3,33 +3,59 @@
 function e(name){ return document.getElementById(name) }
 function v(name){ return e(name).value }
 
-function create(){
-	var request=new XMLHttpRequest()
-	request.open('POST', v('url')+'/create', true)
-	var params='{"key": "k"}'
-	request.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-	//request.setRequestHeader('Content-length', params.length)
-	request.onreadystatechange=function(){
-		if(this.readyState==4&&this.status==200) alert('created')
+var ref=0
+var room='room:fawkes_test_client'
+
+function make_ref(){
+	++ref
+	return ref.toString()
+}
+
+function transceive(transmit_event, transmit_payload, on_receive){
+	var socket=new WebSocket(v('url'))
+	var ref_join=make_ref()
+	socket.onopen=function(){ socket.send(JSON.stringify({
+		'topic': room,
+		'event': 'phx_join',
+		'payload': '{}',
+		'ref': ref_join,
+	}))}
+	socket.onmessage=function(event){
+		var reply=JSON.parse(event.data)
+		if(reply['topic']!=room){ alert('unexpected topic '+reply['topic']+' in reply to join'); return }
+		if(reply['event']!='phx_reply'){ alert('unexpected event '+reply['event']+' in reply to join'); return }
+		if(reply['ref']!=ref_join){ alert('unexpected ref '+reply['ref']+' in reply to join'); return }
+		if(reply['payload']['status']!='ok'){ alert('unexpected status '+reply['payload']['status']+' in reply to join'); return }
+		var ref_transmit=make_ref()
+		socket.send(JSON.stringify({
+			'topic': room,
+			'event': transmit_event,
+			'payload': JSON.stringify(transmit_payload),
+			'ref': ref_transmit,
+		}))
+		socket.onmessage=function(event){
+			var reply=JSON.parse(event.data)
+			if(reply['topic']!=room){ alert('unexpected topic '+reply['topic']+' in reply to transmit'); return }
+			if(reply['event']!='phx_reply'){ alert('unexpected event '+reply['event']+' in reply to transmit, frame: '+event.data); return }
+			if(reply['ref']!=ref_transmit){ alert('unexpected ref '+reply['ref']+' in reply to transmit'); return }
+			if(reply['payload']['status']!='ok'){ alert('unexpected status '+reply['payload']['status']+' in reply to transmit'); return }
+			on_receive(reply['payload']['response'])
+			websocket.close()
+		}
 	}
-	request.send(params)
+}
+
+function create(){
+	transceive('write', {'key': 'k', 'value': 'v'}, function(event){})
 }
 
 function show(){
-	var request=new XMLHttpRequest()
-	request.open('GET', v('url')+'/show', true)
-	var params='{"key": "k", "value": "v"}'
-	request.setRequestHeader('Content-type', 'application/json; charset=utf-8')
-	//request.setRequestHeader('Content-length', params.length)
-	request.onreadystatechange=function(){
-		if(this.readyState==4&&this.status==200) alert(this.responseText)
-	}
-	request.send(params)
+	transceive('read', {'key': 'k'}, function(event){ alert('show: '+JSON.stringify(event)) })
 }
 
 </script>
 <body>
-	url<input type='text' value='http://localhost:4000' id='url'/>
+	url<input type='text' value='ws://localhost:4000/socket/websocket' id='url'/>
 	<br>
 	<input type='button' value='create' onClick='create()'>
 	<input type='button' value='show' onClick='show()'>

@@ -2,7 +2,7 @@ defmodule FawkesWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", FawkesWeb.RoomChannel
+  channel "room:*", FawkesWeb.RoomChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
