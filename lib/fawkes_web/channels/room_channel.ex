@@ -12,8 +12,11 @@ defmodule FawkesWeb.RoomChannel do
     params = Poison.Parser.parse!(params)
     key = params["key"]
     value = params["value"]
-    Logger.info "associating key #{key} with value #{value}"
-    :ets.insert(:fawkes_table, {key, value})
+    if :ets.insert_new(:fawkes_table, {key, value}) do
+      Logger.info "associating key #{key} with value #{value}"
+    else
+      Logger.info "key #{key} already has association"
+    end
     {:noreply, socket}
   end
 
