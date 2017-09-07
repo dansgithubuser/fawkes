@@ -46,7 +46,7 @@ function transceive(transmit_event, transmit_payload, on_receive){
 }
 
 function create(){
-	transceive('write', {'key': 'k', 'value': 'v'}, function(event){})
+	transceive('write', {'key': 'k', 'value': v('value')}, function(event){})
 }
 
 function show(){
@@ -58,6 +58,8 @@ function show(){
 	url<input type='text' value='ws://localhost:4000/socket/websocket' id='url'/>
 	<br>
 	heroku url is ws://immense-meadow-92134.herokuapp.com/socket/websocket
+	<br>
+	value<input type='text' value='v' id='value'/>
 	<br>
 	<input type='button' value='create' onClick='create()'>
 	<input type='button' value='show' onClick='show()'>
