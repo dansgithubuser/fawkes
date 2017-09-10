@@ -5,11 +5,15 @@
 # is restricted to this project.
 use Mix.Config
 
+# General application configuration
+config :fawkes,
+  ecto_repos: [Fawkes.Repo]
+
 # Configures the endpoint
 config :fawkes, FawkesWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "j766e3nWWlVmII/uKcNQ2IGOLOZ7DCjodoTCY4uGlPdVwOP2MhhRmDCTXg6Lrb7y",
-  render_errors: [view: FawkesWeb.ErrorView, accepts: ~w(json)],
+  secret_key_base: "IBSV9kZKwzTq0o++HIcxLcKPX4CapmaKdvNLgNwcHibpdPWTJuBNGJZQo/YkXgI2",
+  render_errors: [view: FawkesWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Fawkes.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

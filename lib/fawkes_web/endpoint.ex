@@ -14,6 +14,8 @@ defmodule FawkesWeb.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 
@@ -34,7 +36,7 @@ defmodule FawkesWeb.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_fawkes_key",
-    signing_salt: "IT94jcol"
+    signing_salt: "iNKi2UVX"
 
   plug FawkesWeb.Router
 
