@@ -17,5 +17,7 @@ erl_crash.dump
 /config/*.secret.exs
 
 #=====manually-written=====#
+fawkes_table
+
 #vim
 *.swp
