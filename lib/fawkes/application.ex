@@ -13,6 +13,8 @@ defmodule Fawkes.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
+      # Start the Ecto repository
+      supervisor(Fawkes.Repo, []),
       # Start the endpoint when the application starts
       supervisor(FawkesWeb.Endpoint, []),
       # Start your own worker by calling: Fawkes.Worker.start_link(arg1, arg2, arg3)
